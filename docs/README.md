@@ -50,7 +50,7 @@ state machines with the following characteristics:
 - Actions can have pre-conditions (Is it currently applicable?) 
   and postconditions (What must be true after an action finishes successfully?).
   
-Looking at this from as a property-based tester suggest the following approach as viable:
+With the perspective of a property-based tester the following approach looks viable:
 
 - Generate a random sequence of actions. 
   Use an action's precondition as a generation constraint.

@@ -3,9 +3,9 @@ repositories {
 	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.junitPlatformVersion = '1.5.2'
-ext.junitJupiterVersion = '5.5.2'
-ext.jqwikVersion = '1.2.3'
+ext.junitPlatformVersion = '1.6.0'
+ext.junitJupiterVersion = '5.6.0'
+ext.jqwikVersion = '1.2.4'
 
 apply plugin: 'java'
 
