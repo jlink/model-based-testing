@@ -9,7 +9,7 @@ that can guide you towards useful and effective properties. A detailed view into
 [John Hughes's](https://twitter.com/rjmh) good practices is his 2019 paper 
 [_How to Specify it!_](https://www.dropbox.com/s/tx2b84kae4bw1p4/paper.pdf).
 Or, if you prefer Java code over Haskell code, read my 
-[line by line translation](https://github.com/jlink/how-to-specify-it/)
+[line by line translation](https://johanneslink.net/how-to-specify-it/)
 of his contents.
 
 One of the approaches that he uses is [model-based properties](https://johanneslink.net/how-to-specify-it/#45-model-based-properties). This kind of properties is interesting
