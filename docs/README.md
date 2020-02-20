@@ -320,7 +320,8 @@ To collect statistics for the state of our counter we had to use
 The property is now failing with
 
 ```
-org.opentest4j.AssertionFailedError: Count of 0 for ["at max"] does not fulfill condition```
+org.opentest4j.AssertionFailedError: Count of 0 for ["at max"] does not fulfill condition
+```
 
 What can we do to have this case covered, too? 
 One trick in our bag is introducing another action that will make the probability
