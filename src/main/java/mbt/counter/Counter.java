@@ -4,19 +4,24 @@ public class Counter {
 
 	private int value = 0;
 
-	public void inc() {
-		value++;
+	public void countUp() {
+		if (value < 100) {
+			value++;
+		}
 	}
 
-	public void set(int value) {
-		this.value = value;
+	public void countDown() {
+		if (value > 0) {
+			value--;
+		}
 	}
 
 	public int value() {
 		return value;
 	}
 
-	public void clear() {
-		value = 0;
+	@Override
+	public String toString() {
+		return String.format("Counter[%d]", value);
 	}
 }
