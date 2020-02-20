@@ -4,7 +4,24 @@ _This is work in progress! Stuff missing!_
 
 _This is work in progress! Really!_
 
-# Model-based Testing
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table of Contents  
+
+- [Introduction](#introduction)
+  - [How to do PBT in Java](#how-to-do-pbt-in-java)
+- [Stateful Testing](#stateful-testing)
+  - [Testing a Counter](#testing-a-counter)
+    - [Specifying the Actions](#specifying-the-actions)
+    - [Running the Property](#running-the-property)
+    - [Tuning the Action Generators](#tuning-the-action-generators)
+- [Model-based Testing](#model-based-testing)
+- [Example: TeCoC - The Contrived CRM](#example-tecoc---the-contrived-crm)
+- [Sharing, Code and License](#sharing-code-and-license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Introduction
 
 When you're doing 
 [property-based testing](https://hypothesis.works/articles/what-is-property-based-testing/) (PBT) 
