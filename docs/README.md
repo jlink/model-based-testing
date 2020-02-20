@@ -486,7 +486,7 @@ public class CounterModel {
 
 I tried to vary a bit on naming and branching logic but you can see that
 model-based testing does not make a lot of sense here - except for learning
-how to use a model in stateful properties. Let's use it for a revised 
+how to use a model in stateful properties. Let's therefore use it in a revised 
 count-up action:
 
 ```java
@@ -512,7 +512,7 @@ Three things are worth noticing here:
   or even hold an instance of the SUT within the model.
 - A trustworthy model frees us from some case-based analysis. We don't need
   to differentiate between a normal count-up action and a count-up action with
-  maximum value anymore; the model has this difference implemented.
+  maximum value anymore; the model has this difference already inside.
   
 The remaining two actions must be changed similarly and the property can stay
 the same except for the type changes and the creation of the initial state. 
