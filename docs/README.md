@@ -4,6 +4,7 @@ _This is work in progress! Stuff missing!_
 
 _This is work in progress! Really!_
 
+<!-- use `doctoc --maxlevel 4 README.md` to recreate the TOC -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of Contents  
@@ -437,7 +438,20 @@ without much knowledge about previous actions and complicated internal state.
 In cases where state-dependency is more involved we will have to find additional
 tools in order to specify the expected outcome of an action with sufficient precision. 
 
-_Model-based testing_ is coming to our rescue...
+As the term tries to express _Model-based Testing_ uses a _model_ of our
+subject under test (SUT). The model is mainly used to solve the  
+"oracle problem of test case generation": How do we know the expected behaviour
+of a SUT without duplicating the system's logic in the test itself?
+The answer to this question differs from situation to situation. 
+Using an explicit model makes sense when the publicly exposed behaviour is
+rather simple but the technical intricacies of its implementation have risk.
+
+To [quote Oskar Wickström on Twitter](https://twitter.com/owickstrom/status/1229997807710429184):
+
+> Model-based properties tend to be very precise and mirror the SUT. 
+> I've found they make most sense when your system has more non-functional 
+> complexity, rather than inherent problem domain complexity.
+
 
 _TBD_
 
