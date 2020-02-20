@@ -1,3 +1,9 @@
+_This is work in progress!_
+
+_This is work in progress! Stuff missing!_
+
+_This is work in progress! Really!_
+
 # Model-based Testing
 
 When you're doing 
@@ -92,9 +98,10 @@ value of `100`. So you come up with the following state transition table:
 |at max        |count down|counting  |
 
 Despite there being just two state changing actions, there are quite
-a few different states and transitions to consider. Using good old example tests
-would require at least 8 scenarios to make sure that all the corner cases
-are being covered. Instead we want to build on 
+a few different states and transitions to consider. The typical goal of any testing
+approach is to cover at least all transitions. Using good old example tests
+this requires at least 8 scenarios. We want to tackle the challenge with PBT 
+and build on 
 [jqwik's support for stateful testing](https://jqwik.net/docs/current/user-guide.html#stateful-testing).
 
 #### Specifying the Actions
@@ -293,8 +300,10 @@ know to be important.
 @Property
 void checkCounter(@ForAll("counterActions") ActionSequence<Counter> actions) {
 	actions.withInvariant(counter -> {
-		String classifier = counter.value() == 0 ? "at zero"
-				: counter.value() == 100 ? "at max" : "in between";
+		String classifier = 
+			counter.value() == 0 ? "at zero"
+			: counter.value() == 100 ? "at max" 
+			: "in between";
 		Statistics.collect(classifier);
 	}).run(new Counter());
 
@@ -311,14 +320,11 @@ To collect statistics for the state of our counter we had to use
 The property is now failing with
 
 ```
-org.opentest4j.AssertionFailedError: Count of 0 does not fulfill condition
-```
+org.opentest4j.AssertionFailedError: Count of 0 for ["at max"] does not fulfill condition```
 
-and the stack trace leads us to the `check("at max")` line so that we know
-which case is not hit by the generator. What can we do?
-
+What can we do to have this case covered, too? 
 One trick in our bag is introducing another action that will make the probability
-of hitting the missing state much more likely. In this case we could, for example,
+of hitting the missing state much more likely. We could, for example,
 randomly raise the counter by a value between `0` and `99`:
 
 ```java
@@ -352,7 +358,7 @@ class RaiseValueAction implements Action<Counter> {
 ```
 
 We also have to modify our sequences generator to include this action.
-I have chosen a ratio of 5 to 1 between the standard actions and the new
+I have chosen a ratio of 5 to 1 between standard actions and the new
 raising action:
 
 ```java
@@ -368,7 +374,7 @@ Arbitrary<ActionSequence<Counter>> counterActions() {
 			Arbitraries
 					.integers()
 					.between(1, 99)
-					.shrinkTowards(99)
+					.shrinkTowards(99) // This improves shrinking
 					.map(RaiseValueAction::new);
 
 	return Arbitraries.sequences(
@@ -390,8 +396,7 @@ Now we are getting the statistics and failure message we want:
 
 CounterProperties:checkCounter = 
     org.opentest4j.AssertionFailedError: Run failed after following actions:
-        raise by 98
-        count up
+        raise by 99
         count up
         count up at max
       final currentModel: Counter[101]}
@@ -403,15 +408,17 @@ to be equal to:
 but was not.
 ```
 
-The fix is now trivial and the happy ending is filling our PBT soul with joy.
+The fix is trivial and the happy ending is filling our souls with joy.
 
 ## Model-based Testing
 
-One can argue that the `Counter` example is too simple in the sense that the postconditions,
+One can argue that the `Counter` example is too simple; 
+"simple" in the sense that all postconditions,
 which are essential for checking an implementation's validity, could be stated
-without much knowledge abut previous actions and complicated internal state.
-In cases where state-dependency is more intrigued we'll have to search for additional
-tools to specify the expected outcome of an action. 
+without much knowledge about previous actions and complicated internal state.
+In cases where state-dependency is more involved we will have to find additional
+tools in order to specify the expected outcome of an action with sufficient precision. 
+
 _Model-based testing_ is coming to our rescue...
 
 _TBD_

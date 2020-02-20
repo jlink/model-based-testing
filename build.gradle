@@ -5,7 +5,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.6.0'
 ext.junitJupiterVersion = '5.6.0'
-ext.jqwikVersion = '1.2.4'
+ext.jqwikVersion = '1.2.5-SNAPSHOT'
 
 apply plugin: 'java'
 
