@@ -17,6 +17,7 @@ _This is work in progress! Really!_
     - [Running the Property](#running-the-property)
     - [Tuning the Action Generators](#tuning-the-action-generators)
 - [Model-based Testing](#model-based-testing)
+  - [A Counter Model](#a-counter-model)
 - [Example: TeCoC - The Contrived CRM](#example-tecoc---the-contrived-crm)
 - [Sharing, Code and License](#sharing-code-and-license)
 
