@@ -1,6 +1,6 @@
-Attribution 2.0 Generic (CC BY 2.0) 
-===================================
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) 
+=======================================================
 
 There are two versions of this license:
-- [The human-readable one](https://creativecommons.org/licenses/by/2.0/)
-- [The legal code](https://creativecommons.org/licenses/by/2.0/legalcode)
+- [The human-readable one](https://creativecommons.org/licenses/by-sa/4.0/)
+- [The legal code]()https://creativecommons.org/licenses/by-sa/4.0/legalcode

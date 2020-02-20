@@ -427,3 +427,10 @@ _TBD_
 ## Example: TeCoC - The Contrived CRM
 
 _TBD_
+
+## Sharing, Code and License
+
+This article is published under the following license:
+[Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
+
+All code is [available at Github](https://github.com/jlink/model-based-testing) 
