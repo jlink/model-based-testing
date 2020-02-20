@@ -438,7 +438,7 @@ without much knowledge about previous actions and complicated internal state.
 In cases where state-dependency is more involved we will have to find additional
 tools in order to specify the expected outcome of an action with sufficient precision. 
 
-As the term tries to express _Model-based Testing_ uses a _model_ of our
+As the term _Model-based Testing_ implies we can use a _model_ of our
 subject under test (SUT). The model is mainly used to solve the  
 "oracle problem of test case generation": How do we know the expected behaviour
 of a SUT without duplicating the system's logic in the test itself?
@@ -446,7 +446,7 @@ The answer to this question differs from situation to situation.
 Using an explicit model makes sense when the publicly exposed behaviour is
 rather simple but the technical intricacies of its implementation have risk.
 
-To [quote Oskar Wickström on Twitter](https://twitter.com/owickstrom/status/1229997807710429184):
+Here's a [quote from Oskar Wickström on Twitter](https://twitter.com/owickstrom/status/1229997807710429184):
 
 > Model-based properties tend to be very precise and mirror the SUT. 
 > I've found they make most sense when your system has more non-functional 
