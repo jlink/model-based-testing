@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.*;
 class CountDownAction implements Action<Counter> {
 
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() > 0;
+	public boolean precondition(Counter counter) {
+		return counter.value() > 0;
 	}
 
 	@Override

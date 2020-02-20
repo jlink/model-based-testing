@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.*;
 class CountUpAtMaxAction implements Action<Counter> {
 
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() == 100;
+	public boolean precondition(Counter counter) {
+		return counter.value() == 100;
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package mbt.counter;
 
 import net.jqwik.api.stateful.*;
-import org.assertj.core.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,8 +13,8 @@ class RaiseValueAction implements Action<Counter> {
 	}
 
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() + raiseBy < 100;
+	public boolean precondition(Counter counter) {
+		return counter.value() + raiseBy < 100;
 	}
 
 	@Override

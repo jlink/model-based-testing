@@ -161,8 +161,8 @@ or to split the action in two cases - and that's what I prefer:
 ```java
 class CountUpAction implements Action<Counter> {
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() < 100;
+	public boolean precondition(Counter counter) {
+		return counter.value() < 100;
 	}
 	@Override
 	public Counter run(Counter counter) {
@@ -179,8 +179,8 @@ class CountUpAction implements Action<Counter> {
 
 class CountUpAtMaxAction implements Action<Counter> {
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() == 100;
+	public boolean precondition(Counter counter) {
+		return counter.value() == 100;
 	}
 	@Override
 	public Counter run(Counter counter) {
@@ -200,8 +200,8 @@ Let's do the same thing for counting down:
 ```java
 class CountDownAction implements Action<Counter> {
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() > 0;
+	public boolean precondition(Counter counter) {
+		return counter.value() > 0;
 	}
 	@Override
 	public Counter run(Counter counter) {
@@ -218,8 +218,8 @@ class CountDownAction implements Action<Counter> {
 
 class CountDownAtZeroAction implements Action<Counter> {
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() == 0;
+	public boolean precondition(Counter counter) {
+		return counter.value() == 0;
 	}
 	@Override
 	public Counter run(Counter counter) {
@@ -355,8 +355,8 @@ class RaiseValueAction implements Action<Counter> {
 	}
 
 	@Override
-	public boolean precondition(Counter state) {
-		return state.value() + raiseBy < 100;
+	public boolean precondition(Counter counter) {
+		return counter.value() + raiseBy < 100;
 	}
 
 	@Override
@@ -452,8 +452,81 @@ Here's a [quote from Oskar Wickström on Twitter](https://twitter.com/owickstrom
 > I've found they make most sense when your system has more non-functional 
 > complexity, rather than inherent problem domain complexity.
 
+In other words: If implementing a model is (almost) as complicated as the original
+implementation itself it's probably not worth it. Since you'll be using the
+model as a reference you must have trust in its correctness. If it requires
+the same testing and implementation effort as the SUT nothing is gained.
 
-_TBD_
+### A Counter Model
+
+Creating a model implementation for counter is not difficult but it will have 
+- more or less - the same code as the original model:
+
+```java
+public class CounterModel {
+	private int value = 0;
+	void up() {
+		if (value == 100) {
+			return;
+		}
+		value++;
+	}
+	void down() {
+		if (value == 0) {
+			return;
+		}
+		value--;
+	}
+	int getValue() {
+		return value;
+	}
+}
+```
+
+I tried to vary a bit on naming and branching logic but you can see that
+model-based testing does not make a lot of sense here - except for learning
+how to use a model in stateful properties. Let's use it for a revised 
+count-up action:
+
+```java
+class CountUpAction implements Action<Tuple2<Counter, CounterModel>> {
+	@Override
+	public Tuple2<Counter, CounterModel> run(Tuple2<Counter, CounterModel> tuple) {
+		Counter counter = tuple.get1();
+		CounterModel counterModel = tuple.get2();
+		counter.countUp();
+		counterModel.up();
+		assertThat(counter.value()).isEqualTo(counterModel.getValue());
+		return tuple;
+	}
+}
+```
+
+Three things are worth noticing here:
+
+- When using a model most actions look alike: Perform the action on SUT and model,
+  then assert that both have the same state.
+- Since the action needs both SUT and model we need a way to make the two available.
+  Using jqwik's `Tuple` type is one option; we could also use any other container 
+  or even hold an instance of the SUT within the model.
+- A trustworthy model frees us from some case-based analysis. We don't need
+  to differentiate between a normal count-up action and a count-up action with
+  maximum value anymore; the model has this difference implemented.
+  
+The remaining two actions must be changed similarly and the property can stay
+the same except for the type changes and the creation of the initial state. 
+Without all the coverage checking it looks like this:
+
+```java
+@Property
+void checkCounter(@ForAll("counterActions") ActionSequence<Tuple2<Counter, CounterModel>> actions) {
+	actions.run(Tuple.of(new Counter(), new CounterModel()));
+}
+```
+
+Now that we have seen the _mechanics_ of model-based testing it's time to
+apply the new knowledge on a more complex problem.
+
 
 ## Example: TeCoC - The Contrived CRM
 
