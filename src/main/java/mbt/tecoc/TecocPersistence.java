@@ -4,14 +4,28 @@ import java.sql.*;
 import java.util.*;
 
 public class TecocPersistence implements AutoCloseable {
+
+	interface WithConnection<T> {
+		T run(Connection connection) throws SQLException;
+	}
+
+	interface WithStatement<T, S extends Statement> {
+		T run(S statement) throws SQLException;
+	}
+
 	private Connection connection;
 
 	public TecocPersistence(Connection connection) {
 		this.connection = connection;
+		try {
+			this.connection.setAutoCommit(false);
+		} catch (SQLException sqlException) {
+			throw new RuntimeException(sqlException);
+		}
 	}
 
 	public void initialize() {
-		executeDDL(
+		executeStatements(
 				"CREATE TABLE IF NOT EXISTS users(" +
 						"id SERIAL PRIMARY KEY, " +
 						"name TEXT NOT NULL, " +
@@ -28,73 +42,88 @@ public class TecocPersistence implements AutoCloseable {
 		);
 	}
 
-	private void executeDDL(String... statements) {
-		try {
-			connection.setAutoCommit(false);
-
-			Statement statement = connection.createStatement();
-			for (String sql : statements) {
-				statement.executeUpdate(sql);
-			}
-			statement.close();
-			connection.commit();
-		} catch (SQLException sqlException) {
-			throw new RuntimeException(sqlException);
-		}
-	}
-
 	public void close() throws SQLException {
 		connection.close();
 	}
 
 	public List<User> findAllUsers() {
-		try {
+		return useStatement(statement -> {
 			ArrayList<User> users = new ArrayList<>();
-			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("select * from users");
 			while (resultSet.next()) {
 				users.add(User.fromResultSet(resultSet));
 			}
 			return users;
-		} catch (SQLException sqlException) {
-			throw new RuntimeException(sqlException);
-		}
+		});
 	}
 
 	public int createUser(User newUser) {
+		return usePreparedStatement(
+				"insert into users(name, email) values(?, ?)",
+				statement -> {
+					statement.setString(1, newUser.getName());
+					statement.setString(2, newUser.getEmail());
+					int count = statement.executeUpdate();
+					if (count > 0) {
+						ResultSet generatedKeys = statement.getGeneratedKeys();
+						generatedKeys.next();
+						return generatedKeys.getInt("id");
+					} else {
+						return 0;
+					}
+				}
+		);
+	}
+
+	public Optional<User> readUser(int newId) {
+		return usePreparedStatement(
+				"select * from users where id=?",
+				statement -> {
+					statement.setInt(1, newId);
+					ResultSet resultSet = statement.executeQuery();
+					if (!resultSet.next()) {
+						return Optional.empty();
+					}
+					return Optional.of(User.fromResultSet(resultSet));
+				}
+		);
+	}
+
+	private <T> T useConnection(WithConnection<T> sqlCode) {
 		try {
-			PreparedStatement statement = connection.prepareStatement(
-					"insert into users(name, email) values(?, ?)",
-					Statement.RETURN_GENERATED_KEYS
-			);
-			statement.setString(1, newUser.getName());
-			statement.setString(2, newUser.getEmail());
-			int count = statement.executeUpdate();
-			if (count > 0) {
-				ResultSet generatedKeys = statement.getGeneratedKeys();
-				generatedKeys.next();
-				return generatedKeys.getInt("id");
-			} else {
-				return 0;
-			}
+			T result = sqlCode.run(connection);
+			connection.commit();
+			return result;
 		} catch (SQLException sqlException) {
 			throw new RuntimeException(sqlException);
 		}
 	}
 
-	public Optional<User> readUser(int newId) {
-		try {
-			PreparedStatement statement = connection.prepareStatement(
-					"select * from users where id=?"
-			);
-			statement.setInt(1, newId);
-			ResultSet resultSet = statement.executeQuery();
-			if (!resultSet.next()) {
-				return Optional.empty();
+	private <T> T useStatement(WithStatement<T, Statement> sqlCode) {
+		return useConnection(c -> {
+			try (Statement statement = c.createStatement()) {
+				return sqlCode.run(statement);
 			}
-			return Optional.of(User.fromResultSet(resultSet));
-		} catch (SQLException sqlException) {
-			throw new RuntimeException(sqlException);
-		}
+		});
 	}
+
+	private <T> T usePreparedStatement(String sql, WithStatement<T, PreparedStatement> sqlCode) {
+		return useConnection(c -> {
+			try (PreparedStatement statement = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+				return sqlCode.run(statement);
+			}
+		});
+	}
+
+	private void executeStatements(String... statements) {
+		useConnection(c -> {
+			try (Statement statement = connection.createStatement()) {
+				for (String sql : statements) {
+					statement.executeUpdate(sql);
+				}
+			}
+			return null;
+		});
+	}
+
 }
