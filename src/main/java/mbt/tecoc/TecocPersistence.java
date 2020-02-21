@@ -75,16 +75,27 @@ public class TecocPersistence implements AutoCloseable {
 		);
 	}
 
-	public Optional<User> readUser(int newId) {
+	public Optional<User> readUser(int userId) {
 		return usePreparedStatement(
 				"select * from users where id=?",
 				statement -> {
-					statement.setInt(1, newId);
+					statement.setInt(1, userId);
 					ResultSet resultSet = statement.executeQuery();
 					if (!resultSet.next()) {
 						return Optional.empty();
 					}
 					return Optional.of(User.fromResultSet(resultSet));
+				}
+		);
+	}
+
+	public boolean deleteUser(int userId) {
+		return usePreparedStatement(
+				"delete from users where id=?",
+				statement -> {
+					statement.setInt(1, userId);
+					int count = statement.executeUpdate();
+					return count > 0;
 				}
 		);
 	}

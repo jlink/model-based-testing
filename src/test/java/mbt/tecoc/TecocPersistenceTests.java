@@ -55,4 +55,13 @@ class TecocPersistenceTests {
 		});
 	}
 
+	@Example
+	void deleteUser() {
+		User newUser = new User("Johannes", "jl@johanneslink.net");
+		int userId = persistence.createUser(newUser);
+
+		assertThat(persistence.deleteUser(userId)).isTrue();
+		assertThat(persistence.readUser(userId)).isNotPresent();
+	}
+
 }
