@@ -33,6 +33,8 @@ dependencies {
 
 	// For Jupiter tests and also necessary to work around some IntelliJ bugs
 	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
+
+	implementation 'org.hsqldb:hsqldb:2.5.0'
 }
 
 wrapper {
