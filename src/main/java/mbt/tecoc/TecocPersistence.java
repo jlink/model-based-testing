@@ -5,11 +5,11 @@ import java.util.*;
 
 public class TecocPersistence implements AutoCloseable {
 
-	interface WithConnection<T> {
+	private interface WithConnection<T> {
 		T run(Connection connection) throws SQLException;
 	}
 
-	interface WithStatement<T, S extends Statement> {
+	private interface WithStatement<T, S extends Statement> {
 		T run(S statement) throws SQLException;
 	}
 
