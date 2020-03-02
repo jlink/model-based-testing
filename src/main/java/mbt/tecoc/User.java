@@ -33,12 +33,20 @@ public class User {
 		this.createdAt = createdAt;
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public String getEmail() {
 		return email;
+	}
+
+	public Instant getCreatedAt() {
+		return createdAt;
 	}
 
 	@Override

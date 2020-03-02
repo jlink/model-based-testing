@@ -36,6 +36,10 @@ public class Post {
 		this.createdAt = createdAt;
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	public int getUserId() {
 		return userId;
 	}
@@ -46,6 +50,10 @@ public class Post {
 
 	public String getBody() {
 		return body;
+	}
+
+	public Instant getCreatedAt() {
+		return createdAt;
 	}
 
 	@Override
