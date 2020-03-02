@@ -7,11 +7,11 @@ public class User {
 
 	static User fromResultSet(ResultSet resultSet) {
 		try {
-			int userId = resultSet.getInt("id");
+			int id = resultSet.getInt("id");
 			String userName = resultSet.getString("name");
 			String userEmail = resultSet.getString("email");
 			Instant userCreatedAt = resultSet.getTimestamp("created_at").toInstant();
-			return new User(userId, userName, userEmail, userCreatedAt);
+			return new User(id, userName, userEmail, userCreatedAt);
 		} catch (SQLException sqlException) {
 			throw new RuntimeException(sqlException);
 		}

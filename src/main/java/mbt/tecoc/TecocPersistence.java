@@ -42,6 +42,14 @@ public class TecocPersistence implements AutoCloseable {
 		);
 	}
 
+	public void reset() {
+		useStatement(statement -> {
+			statement.executeUpdate("delete from posts");
+			statement.executeUpdate("delete from users");
+			return null;
+		});
+	}
+
 	public void close() throws SQLException {
 		connection.close();
 	}
@@ -94,6 +102,61 @@ public class TecocPersistence implements AutoCloseable {
 				"delete from users where id=?",
 				statement -> {
 					statement.setInt(1, userId);
+					int count = statement.executeUpdate();
+					return count > 0;
+				}
+		);
+	}
+
+	public List<Post> findAllPosts() {
+		return useStatement(statement -> {
+			ArrayList<Post> posts = new ArrayList<>();
+			ResultSet resultSet = statement.executeQuery("select * from posts");
+			while (resultSet.next()) {
+				posts.add(Post.fromResultSet(resultSet));
+			}
+			return posts;
+		});
+	}
+
+	public int createPost(Post newPost) {
+		return usePreparedStatement(
+				"insert into posts(user_id, title, body) values(?, ?, ?)",
+				statement -> {
+					statement.setInt(1, newPost.getUserId());
+					statement.setString(2, newPost.getTitle());
+					statement.setString(3, newPost.getBody());
+					int count = statement.executeUpdate();
+					if (count > 0) {
+						ResultSet generatedKeys = statement.getGeneratedKeys();
+						generatedKeys.next();
+						return generatedKeys.getInt("id");
+					} else {
+						return 0;
+					}
+				}
+		);
+	}
+
+	public Optional<Post> readPost(int postId) {
+		return usePreparedStatement(
+				"select * from posts where id=?",
+				statement -> {
+					statement.setInt(1, postId);
+					ResultSet resultSet = statement.executeQuery();
+					if (!resultSet.next()) {
+						return Optional.empty();
+					}
+					return Optional.of(Post.fromResultSet(resultSet));
+				}
+		);
+	}
+
+	public boolean deletePost(int postId) {
+		return usePreparedStatement(
+				"delete from posts where id=?",
+				statement -> {
+					statement.setInt(1, postId);
 					int count = statement.executeUpdate();
 					return count > 0;
 				}
