@@ -53,4 +53,8 @@ public class User {
 	public String toString() {
 		return String.format("User{id=%d, name='%s', email='%s', createdAt=%s}", id, name, email, createdAt);
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 }
