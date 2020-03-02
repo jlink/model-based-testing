@@ -40,7 +40,7 @@ class TecocPersistenceTests {
 	class Users {
 		@Example
 		void newPersistenceHasNoUsers() {
-			assertThat(persistence.findAllUsers()).isEmpty();
+			assertThat(persistence.countUsers()).isZero();
 		}
 
 		@Example
@@ -49,7 +49,7 @@ class TecocPersistenceTests {
 			int newId = persistence.createUser(newUser);
 			assertThat(newId).isNotEqualTo(0);
 
-			assertThat(persistence.findAllUsers()).hasSize(1);
+			assertThat(persistence.countUsers()).isEqualTo(1);
 
 			Optional<User> readUser = persistence.readUser(newId);
 			assertThat(readUser).isPresent();
@@ -74,7 +74,7 @@ class TecocPersistenceTests {
 
 		@Example
 		void newPersistenceHasNoPosts() {
-			assertThat(persistence.findAllPosts()).isEmpty();
+			assertThat(persistence.countPosts()).isZero();
 		}
 
 		@Example
@@ -86,7 +86,7 @@ class TecocPersistenceTests {
 			int newId = persistence.createPost(newPost);
 			assertThat(newId).isNotEqualTo(0);
 
-			assertThat(persistence.findAllPosts()).hasSize(1);
+			assertThat(persistence.countPosts()).isEqualTo(1);
 
 			Optional<Post> readPost = persistence.readPost(newId);
 			assertThat(readPost).isPresent();

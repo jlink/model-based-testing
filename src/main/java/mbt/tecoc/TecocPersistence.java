@@ -44,8 +44,8 @@ public class TecocPersistence implements AutoCloseable {
 
 	public void reset() {
 		useStatement(statement -> {
-			statement.executeUpdate("delete from posts");
-			statement.executeUpdate("delete from users");
+			statement.executeUpdate("DELETE FROM posts");
+			statement.executeUpdate("DELETE FROM users");
 			return null;
 		});
 	}
@@ -54,20 +54,17 @@ public class TecocPersistence implements AutoCloseable {
 		connection.close();
 	}
 
-	public List<User> findAllUsers() {
+	public int countUsers() {
 		return useStatement(statement -> {
-			ArrayList<User> users = new ArrayList<>();
-			ResultSet resultSet = statement.executeQuery("select * from users");
-			while (resultSet.next()) {
-				users.add(User.fromResultSet(resultSet));
-			}
-			return users;
+			ResultSet resultSet = statement.executeQuery("SELECT count(*) as count FROM users");
+			resultSet.next(); // count query always has one result row
+			return resultSet.getInt("count");
 		});
 	}
 
 	public int createUser(User newUser) {
 		return usePreparedStatement(
-				"insert into users(name, email) values(?, ?)",
+				"INSERT INTO users(name, email) VALUES(?, ?)",
 				statement -> {
 					statement.setString(1, newUser.getName());
 					statement.setString(2, newUser.getEmail());
@@ -85,7 +82,7 @@ public class TecocPersistence implements AutoCloseable {
 
 	public Optional<User> readUser(int userId) {
 		return usePreparedStatement(
-				"select * from users where id=?",
+				"SELECT * FROM users WHERE id=?",
 				statement -> {
 					statement.setInt(1, userId);
 					ResultSet resultSet = statement.executeQuery();
@@ -99,7 +96,7 @@ public class TecocPersistence implements AutoCloseable {
 
 	public boolean deleteUser(int userId) {
 		return usePreparedStatement(
-				"delete from users where id=?",
+				"DELETE FROM users WHERE id=?",
 				statement -> {
 					statement.setInt(1, userId);
 					int count = statement.executeUpdate();
@@ -108,20 +105,17 @@ public class TecocPersistence implements AutoCloseable {
 		);
 	}
 
-	public List<Post> findAllPosts() {
+	public int countPosts() {
 		return useStatement(statement -> {
-			ArrayList<Post> posts = new ArrayList<>();
-			ResultSet resultSet = statement.executeQuery("select * from posts");
-			while (resultSet.next()) {
-				posts.add(Post.fromResultSet(resultSet));
-			}
-			return posts;
+			ResultSet resultSet = statement.executeQuery("SELECT count(*) as count FROM posts");
+			resultSet.next(); // count query always has one result row
+			return resultSet.getInt("count");
 		});
 	}
 
 	public int createPost(Post newPost) {
 		return usePreparedStatement(
-				"insert into posts(user_id, title, body) values(?, ?, ?)",
+				"INSERT INTO posts(user_id, title, body) VALUES(?, ?, ?)",
 				statement -> {
 					statement.setInt(1, newPost.getUserId());
 					statement.setString(2, newPost.getTitle());
@@ -140,7 +134,7 @@ public class TecocPersistence implements AutoCloseable {
 
 	public Optional<Post> readPost(int postId) {
 		return usePreparedStatement(
-				"select * from posts where id=?",
+				"SELECT * FROM posts WHERE id=?",
 				statement -> {
 					statement.setInt(1, postId);
 					ResultSet resultSet = statement.executeQuery();
@@ -154,7 +148,7 @@ public class TecocPersistence implements AutoCloseable {
 
 	public boolean deletePost(int postId) {
 		return usePreparedStatement(
-				"delete from posts where id=?",
+				"DELETE FROM posts WHERE id=?",
 				statement -> {
 					statement.setInt(1, postId);
 					int count = statement.executeUpdate();
