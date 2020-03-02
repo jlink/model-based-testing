@@ -86,10 +86,11 @@ public class TecocPersistence implements AutoCloseable {
 				statement -> {
 					statement.setInt(1, userId);
 					ResultSet resultSet = statement.executeQuery();
-					if (!resultSet.next()) {
+					if (resultSet.next()) {
+						return Optional.of(User.fromResultSet(resultSet));
+					} else {
 						return Optional.empty();
 					}
-					return Optional.of(User.fromResultSet(resultSet));
 				}
 		);
 	}
@@ -138,10 +139,11 @@ public class TecocPersistence implements AutoCloseable {
 				statement -> {
 					statement.setInt(1, postId);
 					ResultSet resultSet = statement.executeQuery();
-					if (!resultSet.next()) {
+					if (resultSet.next()) {
+						return Optional.of(Post.fromResultSet(resultSet));
+					} else {
 						return Optional.empty();
 					}
-					return Optional.of(Post.fromResultSet(resultSet));
 				}
 		);
 	}
