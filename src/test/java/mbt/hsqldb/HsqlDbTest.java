@@ -1,4 +1,4 @@
-package mbt.tecoc;
+package mbt.hsqldb;
 
 import java.sql.*;
 
