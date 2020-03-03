@@ -41,7 +41,18 @@ class TecocPersistenceProperties {
 
 	@Provide
 	Arbitrary<ActionSequence<Tuple2<TecocPersistence, PersistenceModel>>> persistenceActions() {
-		return Arbitraries.sequences(createNewUserAction());
+		return Arbitraries.sequences(
+				Arbitraries.oneOf(
+						createNewUserAction(),
+						createPostAction()
+				));
+	}
+
+	private Arbitrary<Action<Tuple2<TecocPersistence, PersistenceModel>>> createPostAction() {
+		Arbitrary<Integer> indices = Arbitraries.integers().between(0, 100);
+		Arbitrary<String> titles = Arbitraries.strings().alpha().ofMinLength(1);
+		Arbitrary<String> bodies = Arbitraries.strings().ofMinLength(1);
+		return Combinators.combine(indices, titles, bodies).as(CreatePostAction::new);
 	}
 
 	private Arbitrary<Action<Tuple2<TecocPersistence, PersistenceModel>>> createNewUserAction() {
