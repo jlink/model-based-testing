@@ -40,6 +40,15 @@ class TecocPersistenceProperties {
 		actions.run(Tuple.of(persistence, new PersistenceModel()));
 
 		actions.runActions().forEach(action -> Statistics.collect(action.getClass().getSimpleName()));
+
+		int countUsers = actions.finalModel().get2().countUsers();
+		String usersClassifier = countUsers <= 10 ? "<= 10" : "> 10";
+		Statistics.label("users").collect(usersClassifier);
+
+		int countPosts = actions.finalModel().get2().countPosts();
+		String postsClassifier = countPosts <= 10 ? "<= 10"
+										 : countPosts <= 20 ? "<= 20" : "> 20";
+		Statistics.label("posts").collect(postsClassifier);
 	}
 
 	@Provide
