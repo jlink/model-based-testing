@@ -4,11 +4,11 @@ import java.util.*;
 
 public class PersistenceModel {
 
-	private final Map<Integer, User> users = new HashMap<>();
+	private final List<User> users = new ArrayList<>();
 
 	public void addUser(int userId, User newUser) {
 		newUser.setId(userId);
-		users.put(userId, newUser);
+		users.add(newUser);
 	}
 
 	public int countUsers() {
@@ -16,7 +16,9 @@ public class PersistenceModel {
 	}
 
 	public Optional<User> readUser(int userId) {
-		return Optional.ofNullable(users.get(userId));
+		return users.stream()
+					.filter(user -> user.getId() == userId)
+					.findFirst();
 	}
 
 }

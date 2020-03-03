@@ -31,13 +31,23 @@ class CreateNewUserAction implements Action<Tuple2<TecocPersistence, Persistence
 	}
 
 	private void compareReadUser(int userId, Tuple2<TecocPersistence, PersistenceModel> state) {
-		Optional<User> user = state.get1().readUser(userId);
-		Optional<User> userFromModel = state.get2().readUser(userId);
-		assertThat(user.isPresent()).isEqualTo(userFromModel.isPresent());
+		Optional<User> optionalUser = state.get1().readUser(userId);
+		Optional<User> optionalUserFromModel = state.get2().readUser(userId);
+		assertThat(optionalUser.isPresent()).isEqualTo(optionalUserFromModel.isPresent());
+		optionalUser.ifPresent(user -> {
+			optionalUserFromModel.ifPresent(userFromModel -> {
+				assertThat(user.getName()).isEqualTo(userFromModel.getName());
+				assertThat(user.getEmail()).isEqualTo(userFromModel.getEmail());
+			});
+		});
 	}
 
 	private void compareCounts(Tuple2<TecocPersistence, PersistenceModel> state) {
 		assertThat(state.get1().countUsers()).isEqualTo(state.get2().countUsers());
 	}
 
+	@Override
+	public String toString() {
+		return String.format("create-new-user[%s, %s]", userName, userEmail);
+	}
 }
