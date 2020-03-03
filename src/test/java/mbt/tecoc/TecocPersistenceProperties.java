@@ -6,6 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.api.statistics.Statistics;
 
 class TecocPersistenceProperties {
 
@@ -37,6 +38,8 @@ class TecocPersistenceProperties {
 	@Property
 	void checkPersistence(@ForAll("persistenceActions") ActionSequence<Tuple2<TecocPersistence, PersistenceModel>> actions) {
 		actions.run(Tuple.of(persistence, new PersistenceModel()));
+
+		actions.runActions().forEach(action -> Statistics.collect(action.getClass().getSimpleName()));
 	}
 
 	@Provide
