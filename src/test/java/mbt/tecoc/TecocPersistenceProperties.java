@@ -47,8 +47,14 @@ class TecocPersistenceProperties {
 		return Arbitraries.sequences(
 				Arbitraries.oneOf(
 						createNewUserAction(),
-						createPostAction()
+						createPostAction(),
+						deleteUserAction()
 				));
+	}
+
+	private Arbitrary<Action<Tuple2<TecocPersistence, PersistenceModel>>> deleteUserAction() {
+		Arbitrary<Integer> indices = Arbitraries.integers().between(0, 100);
+		return indices.map(DeleteUserAction::new);
 	}
 
 	private Arbitrary<Action<Tuple2<TecocPersistence, PersistenceModel>>> createPostAction() {

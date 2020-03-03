@@ -41,4 +41,12 @@ public class PersistenceModel {
 					.filter(post -> post.getId() == postId)
 					.findFirst();
 	}
+
+	public void removeUser(int userId) {
+		users.removeIf(user -> user.getId() == userId);
+	}
+
+	public boolean hasNoPosts(int userId) {
+		return posts.stream().noneMatch(post -> post.getUserId() == userId);
+	}
 }
