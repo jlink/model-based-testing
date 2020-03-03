@@ -1,13 +1,10 @@
 package mbt.tecoc;
 
-import java.util.*;
-
 import net.jqwik.api.Tuple.*;
-import net.jqwik.api.stateful.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class CreateNewUserAction implements Action<Tuple2<TecocPersistence, PersistenceModel>> {
+class CreateNewUserAction extends AbstractPersistenceAction {
 
 	private final String userName;
 	private final String userEmail;
@@ -28,22 +25,6 @@ class CreateNewUserAction implements Action<Tuple2<TecocPersistence, Persistence
 		compareCounts(state);
 
 		return state;
-	}
-
-	private void compareReadUser(int userId, Tuple2<TecocPersistence, PersistenceModel> state) {
-		Optional<User> optionalUser = state.get1().readUser(userId);
-		Optional<User> optionalUserFromModel = state.get2().readUser(userId);
-		assertThat(optionalUser.isPresent()).isEqualTo(optionalUserFromModel.isPresent());
-		optionalUser.ifPresent(user -> {
-			optionalUserFromModel.ifPresent(userFromModel -> {
-				assertThat(user.getName()).isEqualTo(userFromModel.getName());
-				assertThat(user.getEmail()).isEqualTo(userFromModel.getEmail());
-			});
-		});
-	}
-
-	private void compareCounts(Tuple2<TecocPersistence, PersistenceModel> state) {
-		assertThat(state.get1().countUsers()).isEqualTo(state.get2().countUsers());
 	}
 
 	@Override
