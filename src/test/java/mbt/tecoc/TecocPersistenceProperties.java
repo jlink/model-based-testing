@@ -1,12 +1,15 @@
 package mbt.tecoc;
 
 import java.sql.*;
+import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.api.statistics.Statistics;
+import org.assertj.core.api.*;
 
 class TecocPersistenceProperties {
 
@@ -51,6 +54,29 @@ class TecocPersistenceProperties {
 		Statistics.label("posts").collect(postsClassifier);
 	}
 
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	void checkDuplicateEmailsArePrevented(@ForAll("persistenceActions") ActionSequence<Tuple2<TecocPersistence, PersistenceModel>> actions) {
+		Invariant<Tuple2<TecocPersistence, PersistenceModel>> noDuplicateEmails =
+				tuple -> {
+					PersistenceModel model = tuple.get2();
+					Map<String, Long> emailCounts =
+							model.users().stream().collect(
+									Collectors.groupingBy(
+											User::getEmail, Collectors.counting()
+									)
+							);
+					emailCounts.forEach((email, count) -> {
+						Assertions.assertThat(count)
+								  .describedAs("Email: %s has duplicate", email)
+								  .isLessThan(2);
+					});
+
+				};
+
+		actions.withInvariant("no duplicate emails", noDuplicateEmails)
+			   .run(Tuple.of(persistence, new PersistenceModel()));
+	}
+
 	@Provide
 	Arbitrary<ActionSequence<Tuple2<TecocPersistence, PersistenceModel>>> persistenceActions() {
 		return Arbitraries.sequences(
@@ -75,11 +101,19 @@ class TecocPersistenceProperties {
 
 	private Arbitrary<Action<Tuple2<TecocPersistence, PersistenceModel>>> createNewUserAction() {
 		Arbitrary<String> names = Arbitraries.strings().alpha().ofMinLength(1);
-		Arbitrary<String> domains = Arbitraries.of("somemail.com", "mymail.net", "whatever.info");
-		return Combinators.combine(names, domains).as((userName, domain) -> {
-			String email = userName + "@" + domain;
-			return new CreateNewUserAction(userName, email);
-		});
+		return Combinators.combine(names, emails()).as(CreateNewUserAction::new);
+	}
+
+	private Arbitrary<String> emails() {
+		Arbitrary<String> userNames = Arbitraries.oneOf(
+				Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(12),
+				Arbitraries.of("user1", "user2", "user3")
+		);
+		Arbitrary<String> domains = Arbitraries.of(
+				"somemail.com", "mymail.net", "whatever.info"
+		);
+		return Combinators.combine(userNames, domains)
+						  .as((userName, domain) -> userName + "@" + domain);
 	}
 
 }

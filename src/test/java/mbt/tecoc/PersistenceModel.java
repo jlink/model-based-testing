@@ -49,4 +49,8 @@ public class PersistenceModel {
 	public boolean hasNoPosts(int userId) {
 		return posts.stream().noneMatch(post -> post.getUserId() == userId);
 	}
+
+	public List<User> users() {
+		return users;
+	}
 }
