@@ -8,7 +8,7 @@ class CounterProperties {
 
 	@Property
 	void checkCounter(@ForAll("counterActions") ActionSequence<Counter> actions) {
-		actions.withInvariant(counter -> {
+		actions.peek(counter -> {
 			String classifier =
 					counter.value() == 0 ? "at zero"
 							: counter.value() == 100 ? "at max"
